@@ -1,0 +1,5 @@
+node_modules
+audits/
+logs/
+debug/
+.ssh/

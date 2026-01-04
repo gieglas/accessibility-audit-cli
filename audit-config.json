@@ -1,0 +1,33 @@
+{
+    "standard": "EN301549-v3.2.1",
+    "sites": [
+        {
+            "siteId": "govcy",
+            "baseUrl": "https://www.gov.cy",
+            "pages": [
+                {
+                    "pageId": "home",
+                    "url": "https://www.gov.cy/"
+                },
+                {
+                    "pageId": "search",
+                    "url": "https://www.gov.cy/?s=performance"
+                }
+            ]
+        },
+        {
+            "siteId": "consevangelou",
+            "baseUrl": "https://consevangelou.com/",
+            "pages": [
+                {
+                    "pageId": "home",
+                    "url": "https://consevangelou.com/"
+                },
+                {
+                    "pageId": "search",
+                    "url": "https://consevangelou.com/search/"
+                }
+            ]
+        }
+    ]
+}

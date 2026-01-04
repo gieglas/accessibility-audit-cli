@@ -1,0 +1,29 @@
+{
+  "name": "accessibility-audit-cli",
+  "version": "1.0.0",
+  "description": "CLI tool to run accessibility audits (WCAG / EN 301 549)",
+  "license": "MIT",
+  "type": "module",
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "wcag",
+    "en301549",
+    "axe-core",
+    "audit"
+  ],
+  "author": "Constantinos Evangelou",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test",
+    "audit": "node cli/run-audit.mjs"
+  },
+  "dependencies": {
+    "@consevangelou/accessibility-audit-core": "^1.0.5",
+    "axe-core": "^4.11.0",
+    "pa11y": "^9.0.1",
+    "puppeteer": "^24.33.0"
+  }
+}
