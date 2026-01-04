@@ -6,8 +6,8 @@
 ``` bash
 git commit -am "Release 2.1.4"
 git tag v2.1.4
-git tag -f latest
-git tag -f v2.x.x
+# git tag -f latest
+# git tag -f v2.x.x
 git push origin main
 git push origin --force --tags
 ```
