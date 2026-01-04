@@ -5,7 +5,7 @@
 
 ``` bash
 git commit -am "Release 2.1.4"
-git tag -a v2.1.4 -m "Release 2.1.4"
+git tag v2.1.4
 git tag -f latest
 git tag -f v2.x.x
 git push origin main
