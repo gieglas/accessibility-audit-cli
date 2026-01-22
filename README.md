@@ -120,8 +120,8 @@ Current structure:
 audits/
 └── EN301549_v3.2.1/
     └── site-govcy/
-        ├── run-20251229T124734Z.json
-        ├── run-20251230T124740Z.json
+        ├── run-20251229.json
+        ├── run-20251230.json
 ```
 
 **Explanation:**
@@ -131,8 +131,8 @@ audits/
   This allows future audits against newer standards to coexist safely.
 - `site-govcy/`
   One folder per audited site (`siteId` from the audit config).
-- `run-YYYYMMDDTHHMMSSZ.json`
-  One file per audit execution, named using the UTC timestamp of the run.
+- `run-YYYYMMDD.json`
+  One file per audit execution, named using the UTC date of the run.
   This makes time-based aggregation trivial without opening files.
 
 Each file represents **one audit run for one site**.

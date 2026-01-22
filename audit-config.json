@@ -16,6 +16,92 @@
             ]
         },
         {
+            "siteId": "cypruspost",
+            "baseUrl": "https://www.cypruspost.post/",
+            "pages": [
+                {
+                    "pageId": "home",
+                    "url": "https://www.cypruspost.post/"
+                },
+                {
+                    "pageId": "about",
+                    "url": "https://www.cypruspost.post/en/about-us"
+                },
+                {
+                    "pageId": "book-appointment",
+                    "url": "https://kepo.cypruspost.post/v2/#book/count/1/provider/any/"
+                },
+                {
+                    "pageId": "book-appointment-2",
+                    "url": "https://kepo.cypruspost.post/v2/#book/location/2/category/14/service/70/provider/any/"
+                },
+                {   
+                    "pageId": "search",
+                    "url": "https://www.cypruspost.post/en/search?query=deftera"
+                }
+            ]
+        },
+        {
+            "siteId": "kep-kepo",
+            "baseUrl": "https://kep-kepo.gov.cy/",
+            "pages": [
+                {
+                    "pageId": "home",
+                    "url": "https://kep-kepo.gov.cy/appointments/kep_cyprus/service_types.php"
+                },
+                {
+                    "pageId": "book-appointment",
+                    "url": "https://kep-kepo.gov.cy/appointments/kep_cyprus/service_points.php?service_type=physical_appointment"
+                },
+                {
+                    "pageId": "book-appointment-2",
+                    "url": "https://kep-kepo.gov.cy/appointments/kep_cyprus/book_appointment.php?service_type=physical_appointment"
+                }
+            ]
+        },
+        {
+            "siteId": "dsf",
+            "baseUrl": "https://dsf.dmrid.gov.cy/",
+            "pages": [
+                {
+                    "pageId": "home",
+                    "url": "https://dsf.dmrid.gov.cy/"
+                },
+                {
+                    "pageId": "search",
+                    "url": "https://dsf.dmrid.gov.cy/?s=performance"
+                }
+            ]
+        },
+        {
+            "siteId": "presidency",
+            "baseUrl": "https://www.gov.cy/presidency/",
+            "pages": [
+                {
+                    "pageId": "home",
+                    "url": "https://www.gov.cy/presidency/"
+                },
+                {
+                    "pageId": "news",
+                    "url": "https://www.gov.cy/presidency/recent-news/"
+                }
+            ]
+        },
+        {
+            "siteId": "idme",
+            "baseUrl": "https://www.idme.gov.cy/",
+            "pages": [
+                {
+                    "pageId": "home",
+                    "url": "https://www.idme.gov.cy/"
+                },
+                {
+                    "pageId": "how-to-get-id",
+                    "url": "https://www.idme.gov.cy/chrisi-e-id/pos-mporo-na-apoktiso-e-id/"
+                }
+            ]
+        },
+        {
             "siteId": "consevangelou",
             "baseUrl": "https://consevangelou.com/",
             "pages": [
