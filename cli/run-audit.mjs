@@ -1,14 +1,100 @@
 #!/usr/bin/env node
 import { fileURLToPath } from "node:url";
+import { createWriteStream } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import util from "node:util";
 
 import puppeteer from "puppeteer";
 import axe from "axe-core";
-
 import { axeToRawFindings ,normaliseFindings, loadStandard } from "@consevangelou/accessibility-audit-core";
 import { saveAuditRun } from "./persistence/saveAuditRun.mjs";
+
+/**
+ * Format a Date object into YYYYMMDDHHMMSS
+ * @param {*} date Date object (default: now) 
+ * @returns {string} Formatted timestamp
+ */
+function formatTimestampForLog(date = new Date()) {
+    const pad = value => value.toString().padStart(2, "0");
+    return (
+        date.getFullYear().toString() +
+        pad(date.getMonth() + 1) +
+        pad(date.getDate()) +
+        pad(date.getHours()) +
+        pad(date.getMinutes()) +
+        pad(date.getSeconds())
+    );
+}
+
+/**
+ * Create a logger that writes to console and optionally to a log file. 
+ * @param {*} enableLog Whether to enable file logging
+ * @returns {Object} Logger with log, warn, error methods and close() 
+ */
+async function createLogger(enableLog) {
+    const noop = async () => {};
+
+    // If logging is disabled, return no-op close and console-bound methods
+    if (!enableLog) {
+        return {
+            filePath: null,
+            log: console.log.bind(console),
+            warn: console.warn.bind(console),
+            error: console.error.bind(console),
+            close: noop
+        };
+    }
+
+    // Ensure log directory exists
+    const logDir = path.resolve("log");
+    await fs.mkdir(logDir, { recursive: true });
+
+    // Create log file stream
+    const logFilePath = path.join(
+        logDir,
+        `audit-run-${formatTimestampForLog()}.txt`
+    );
+    const stream = createWriteStream(logFilePath, {
+        flags: "a",
+        encoding: "utf8"
+    });
+
+    // Create console-bound methods
+    const original = {
+        log: console.log.bind(console),
+        warn: console.warn.bind(console),
+        error: console.error.bind(console)
+    };
+
+    // Write log lines to file
+    stream.on("error", err => {
+        original.error("Failed to write to log file:", err);
+    });
+
+    // ISO timestamp + level keeps log files machine-parsable while readable.
+    const formatLogLine = (level, args) =>
+        `${new Date().toISOString()} ${level.toUpperCase()} ${util.format(...args)}`;
+
+    // Mirror console methods
+    const mirror = (level, args) => {
+        original[level](...args);
+        stream.write(`${formatLogLine(level, args)}\n`);
+    };
+
+    // Return logger object
+    return {
+        filePath: logFilePath,
+        log: (...args) => mirror("log", args),
+        warn: (...args) => mirror("warn", args),
+        error: (...args) => mirror("error", args),
+        close: () =>
+            new Promise(resolve => {
+                stream.end(resolve);
+            })
+    };
+}
 
 /**
  * Entry point for audit execution.
@@ -16,12 +102,10 @@ import { saveAuditRun } from "./persistence/saveAuditRun.mjs";
  * Usage:
  *   node cli/run-audit.mjs audit-config.json
  */
-async function runAudit() {
+async function runAudit({ args, logger }) {
     // ----
     // Step 0: Read CLI arguments
     // ----
-    const args = process.argv.slice(2);
-
     const configPath = args.find(arg => !arg.startsWith("--"));
     const isDebug = args.includes("--debug");
 
@@ -29,14 +113,16 @@ async function runAudit() {
     const debugDir = path.resolve("debug");
 
     if (isDebug) {
-        console.log("⚠ Running in DEBUG mode");
+        logger.log("⚠ Running in DEBUG mode");
         await fs.mkdir(debugDir, { recursive: true });
     }
 
 
     if (!configPath) {
-        console.error("Usage: node cli/run-audit.mjs <audit-config.json>");
-        process.exit(1);
+        logger.error("Usage: node cli/run-audit.mjs <audit-config.json>");
+        const error = new Error("Audit config path is required");
+        error.isUsageError = true;
+        throw error;
     }
 
     // ----
@@ -80,11 +166,11 @@ async function runAudit() {
             const { siteId, pages } = site;
 
             if (!siteId || !Array.isArray(pages) || pages.length === 0) {
-                console.warn(`Skipping invalid site entry: ${siteId}`);
+                logger.warn(`Skipping invalid site entry: ${siteId}`);
                 continue;
             }
 
-            console.log(`\n▶ Auditing site: ${siteId}`);
+            logger.log(`\n▶ Auditing site: ${siteId}`);
 
             const auditRunId = `run-${Date.now()}`;
             const startedAt = new Date().toISOString();
@@ -98,11 +184,11 @@ async function runAudit() {
                 const { pageId, url } = pageConfig;
 
                 if (!pageId || !url) {
-                    console.warn(`Skipping invalid page in site ${siteId}`);
+                    logger.warn(`Skipping invalid page in site ${siteId}`);
                     continue;
                 }
 
-                console.log(`  → Auditing page: ${pageId}`);
+                logger.log(`  → Auditing page: ${pageId}`);
 
                 const page = await browser.newPage();
 
@@ -152,9 +238,14 @@ async function runAudit() {
                         pageUrl: url
                     });
 
+                    if (pageRawFindings.length === 0) {
+                        logger.log(`    ✔ No issues found on page ${pageId}`);
+                    } else {
+                        logger.log(`    ⚠ Found ${pageRawFindings.length} issues on page ${pageId}`);
+                    }
                     rawFindings.push(...pageRawFindings);
                 } catch (err) {
-                    console.error(`    ✖ Failed to audit page ${pageId}: ${err.message}`);
+                    logger.error(`    ✖ Failed to audit page ${pageId}: ${err.message}`);
                 } finally {
                     await page.close();
                 }
@@ -207,7 +298,7 @@ async function runAudit() {
             // Step 8: Persist audit-run
             // ----
             const savedPath = await saveAuditRun(auditRunData);
-            console.log(`✔ Saved audit run: ${savedPath}`);
+            logger.log(`✔ Saved audit run: ${savedPath}`);
         }
     } finally {
         // ----
@@ -217,8 +308,33 @@ async function runAudit() {
     }
 }
 
-// Run
-runAudit().catch(err => {
-    console.error("Audit execution failed:", err);
-    process.exit(1);
-});
+async function main() {
+    const args = process.argv.slice(2);
+    // Check for --log flag to enable file logging
+    const enableLog = args.includes("--log");
+    const logger = await createLogger(enableLog);
+
+    if (logger.filePath) {
+        logger.log(`Logging enabled. Writing to ${logger.filePath}`);
+    }
+
+    let exitCode = 0;
+
+    try {
+        await runAudit({ args, logger });
+    } catch (err) {
+        exitCode = 1;
+
+        if (!err?.isUsageError) {
+            logger.error("Audit execution failed:", err);
+        }
+    } finally {
+        await logger.close();
+
+        if (exitCode !== 0) {
+            process.exit(exitCode);
+        }
+    }
+}
+
+main();

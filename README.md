@@ -40,21 +40,27 @@ Using **npm**
 npm run audit -- audit-config.json
 ```
 
-### Debug mode
+### Debug and logging mode
+
+Add `--debug` to enable debug mode and `--log` to enable logging to file.
 
 Using **node**
 
 ```bash
-node cli/run-audit.mjs audit-config.json --debug
+node cli/run-audit.mjs audit-config.json --debug --log
 ```
 
 Using **npm**
 
 ```bash
-npm run audit -- audit-config.json --debug
+npm run audit -- audit-config.json --debug --log
 ```
 
-Debug mode captures screenshots and rendered HTML in `/debug`.
+**Notes**
+
+- Debug mode captures screenshots and rendered HTML in `/debug`.
+- Logs mirror CLI output into a timestamped file under `./log/` by passing `--log`.
+  - Each run creates `log/audit-run-YYYYMMDDHHMMSS.txt` containing the same lines shown in the console, prefixed with `ISO_TIMESTAMP LEVEL` for easier parsing.
 
 ## Audit config example
 
