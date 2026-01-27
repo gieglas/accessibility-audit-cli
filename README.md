@@ -1,4 +1,4 @@
-# Accessibility Audit Core
+# Accessibility Audit CLI
 
 This project is a **command-line accessibility auditing tool** built on top of **Puppeteer** and **axe-core**, designed to run repeatable, standards-aligned accessibility audits.
 
@@ -15,45 +15,36 @@ This project is a **command-line accessibility auditing tool** built on top of *
 
 - Node.js v20+
 - npm
-- `@consevangelou/accessibility-audit-core` npm package
 - Local execution (some sites block cloud runners)
 
 ## Installation
 
 ```bash
-npm install
+npm install @consevangelou/accessibility-audit-cli
 ```
 
-## Running an audit
+## Usage
 
-### Basic
+### Running an audit
 
-Using **node**
+Run the `accessibility-audit` command with a path to an audit config file.
 
 ```bash
-node cli/run-audit.mjs audit-config.json
+npx accessibility-audit audit-config.json
 ```
 
-Using **npm**
+or
 
 ```bash
-npm run audit -- audit-config.json
+.\node_modules\.bin\accessibility-audit audit-config.json
 ```
 
-### Debug and logging mode
+#### Debug and logging mode
 
 Add `--debug` to enable debug mode and `--log` to enable logging to file.
 
-Using **node**
-
 ```bash
-node cli/run-audit.mjs audit-config.json --debug --log
-```
-
-Using **npm**
-
-```bash
-npm run audit -- audit-config.json --debug --log
+npx accessibility-audit audit-config.json --debug --log
 ```
 
 **Notes**
@@ -62,7 +53,7 @@ npm run audit -- audit-config.json --debug --log
 - Logs mirror CLI output into a timestamped file under `./log/` by passing `--log`.
   - Each run creates `log/audit-run-YYYYMMDDHHMMSS.txt` containing the same lines shown in the console, prefixed with `ISO_TIMESTAMP LEVEL` for easier parsing.
 
-## Audit config example
+#### Audit config example
 
 ```json
 {
@@ -100,7 +91,9 @@ npm run audit -- audit-config.json --debug --log
 }
 ```
 
-## Output
+Note: `baseUrl` is currently informational and not used during execution.
+
+#### Audit Output
 
 - Running an audit produces **persistent audit result files** on disk.
   Each audit run generates **one JSON file per site**, containing:
@@ -116,7 +109,7 @@ npm run audit -- audit-config.json --debug --log
   - Easy to aggregate later (per site, per period, per standard)
   - Independent of reporting or visualisation logic
 
-### Output files and folder structure
+#### Audit output files and folder structure
 
 Audit results are stored under the `audits/` directory using a **standard-first, site-centric structure**.
 
@@ -145,7 +138,7 @@ Each file represents **one audit run for one site**.
 
 ------
 
-### Output schema (high-level)
+#### Audit Output schema (high-level)
 
 Each audit run file follows this structure:
 
@@ -170,11 +163,11 @@ At a glance:
 
 ------
 
-### Output schema (detailed)
+#### Audit Output schema (detailed)
 
 Below is the full logical schema, with key fields explained.
 
-#### Root
+##### Root
 
 ```yml
 schemaVersion: string
@@ -187,7 +180,7 @@ results: AuditResults
 
 ------
 
-#### AuditRunMeta
+##### AuditRunMeta
 
 ```yaml
 auditRun: {
@@ -207,7 +200,7 @@ auditRun: {
 
 ------
 
-#### EnvironmentMeta
+##### EnvironmentMeta
 
 ```yaml
 environment: {
@@ -220,7 +213,7 @@ Describes the runtime environment that produced the audit.
 
 ------
 
-#### StandardMeta
+##### StandardMeta
 
 ```yaml
 standard: {
@@ -233,7 +226,7 @@ References the standard JSON used to interpret WCAG criteria.
 
 ------
 
-#### AuditScope
+##### AuditScope
 
 ```yaml
 scope: {
@@ -251,7 +244,7 @@ Defines **what was audited**, not what was found.
 
 ------
 
-#### AuditResults
+##### AuditResults
 
 ```yaml
 results: {
@@ -272,7 +265,7 @@ Two layers are intentionally preserved:
 
 ------
 
-#### RawFinding
+##### RawFinding
 
 A RawFinding represents **one axe-core violation on one DOM node**.
 
@@ -303,7 +296,7 @@ Raw findings are **never aggregated or altered**.
 
 ------
 
-#### NormalisedFinding
+##### NormalisedFinding
 
 Normalised findings are **grouped summaries** suitable for compliance reporting.
 
@@ -337,7 +330,7 @@ This separation ensures:
 
 ------
 
-### Example output (excerpt)
+#### Audit Example output (excerpt)
 
 ```json
 {
