@@ -1,0 +1,137 @@
+name: Tag and Publish on Version Change
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**'
+# 🔸ADDED - enables npm auth via OIDC trusted publisher
+permissions:
+  id-token: write  # Required for OIDC
+  contents: write
+
+jobs:
+  # Duplicated from `.github/workflows/version-sanity-checks.yml` could use https://github.blog/2022-02-10-using-reusable-workflows-github-actions ?
+  tag-and-publish-on-version-change:
+    name: Tag and publish on version change
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EndBug/version-check@v2.1.5
+        with:
+          static-checking: localIsNew
+          token: ${{ secrets.GITHUB_TOKEN }}
+          file-url: https://raw.githubusercontent.com/gieglas/accessibility-audit-cli/latest/package.json
+        id: version-check
+      - name: Check version not decreased
+        if: steps.version-check.outputs.changed == 'true' && steps.version-check.outputs.type == 'undefined'
+        run: echo "You should NEVER decrement/ decrease the version in the package.json. This will undermine confidence in our ability to follow semver rules"; exit 1
+      - name: Check package.lock::version updated if ./dist changed
+        if: steps.version-check.outputs.changed == 'false'
+        run: echo "Version remained the same. Exiting..."; 
+      - name: Create 'vX.X.X' version git tag
+        if: steps.version-check.outputs.changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/v' + '${{ steps.version-check.outputs.version }}',
+              sha: context.sha
+            })
+      - uses: dev-drprasad/delete-tag-and-release@v0.2.1
+        if: steps.version-check.outputs.changed == 'true'
+        with:
+          tag_name: latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create 'latest' git tag
+        if: steps.version-check.outputs.changed == 'true'
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/latest',
+              sha: context.sha
+            })
+      - name: Extract Major Version
+        if: steps.version-check.outputs.changed == 'true'
+        id: major-version
+        run: echo "major=$(echo '${{ steps.version-check.outputs.version }}' | cut -d. -f1)" >> $GITHUB_ENV
+      - name: Create 'vX.x.x' version git tag
+        if: steps.version-check.outputs.changed == 'true'
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const majorVersion = process.env.major || "0"; // Default to "0" if not set
+            console.log(`Extracted Major Version: ${majorVersion}`); // Debugging output
+            const tagName = `v${majorVersion}.x.x`;
+            console.log(`Tag to create: ${tagName}`); // Debugging output
+            
+            const tagExists = await github.rest.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tagName}`
+            }).catch(() => null);
+
+            if (tagExists) {
+                await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tagName}`
+                });
+            }
+
+            await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/tags/${tagName}`,
+                sha: context.sha
+            });
+      # Publish on npm
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          # 🔸ADDED - enables npm auth via OIDC trusted publisher
+          scope: '@consevangelou'
+          always-auth: true
+      - name: Test OIDC connection
+        run: npm publish --provenance --access public --dry-run
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@latest
+      - name: Install dependencies 
+        run: npm ci
+      - name: Publish package on NPM 📦
+        run: npm publish --provenance --access=public
+        # With the change to use Trusted Publisher the NPM TOKEN is no longer needed
+      - name: Zip /core folder
+        if: steps.version-check.outputs.changed == 'true'
+        run: zip -r core.zip core
+      - name: Create Release
+        if: steps.version-check.outputs.changed == 'true'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name:  'v${{ steps.version-check.outputs.version }}'
+          release_name: Release ${{ steps.version-check.outputs.version }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        if: steps.version-check.outputs.changed == 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./core.zip
+          asset_name: core.zip
+          asset_content_type: application/zip

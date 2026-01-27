@@ -1,6 +1,6 @@
 {
   "name": "@consevangelou/accessibility-audit-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "CLI tool to run accessibility audits (WCAG / EN 301 549) ",
   "license": "MIT",
   "type": "module",
