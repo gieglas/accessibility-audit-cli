@@ -111,9 +111,9 @@ jobs:
       - name: Publish package on NPM 📦
         run: npm publish --provenance --access=public
         # With the change to use Trusted Publisher the NPM TOKEN is no longer needed
-      - name: Zip /core folder
+      - name: Zip /cli folder
         if: steps.version-check.outputs.changed == 'true'
-        run: zip -r core.zip core
+        run: zip -r cli.zip cli
       - name: Create Release
         if: steps.version-check.outputs.changed == 'true'
         id: create_release
