@@ -1,4 +1,8 @@
 # Accessibility Audit CLI
+[![npm (scoped)](https://img.shields.io/npm/v/@consevangelou/accessibility-audit-cli)](https://www.npmjs.com/package/@consevangelou/accessibility-audit-cli)
+![License](https://img.shields.io/github/license/gieglas/accessibility-audit-cli)
+[![Unit test](https://github.com/gieglas/accessibility-audit-cli/actions/workflows/unit-test.yml/badge.svg)](https://github.com/gieglas/accessibility-audit-cli/actions/workflows/unit-test.yml)
+[![tag-and-publish-on-version-change](https://github.com/gieglas/accessibility-audit-cli/actions/workflows/tag-and-publish-on-version-change.yml/badge.svg)](https://github.com/gieglas/accessibility-audit-cli/actions/workflows/tag-and-publish-on-version-change.yml)
 
 This project is a **command-line accessibility auditing tool** built on top of **Puppeteer** and **axe-core**, designed to run repeatable, standards-aligned accessibility audits.
 

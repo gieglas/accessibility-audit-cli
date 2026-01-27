@@ -1,6 +1,6 @@
 {
   "name": "@consevangelou/accessibility-audit-cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "CLI tool to run accessibility audits (WCAG / EN 301 549) ",
   "license": "MIT",
   "type": "module",
@@ -21,6 +21,11 @@
     "axe-core",
     "audit"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gieglas/accessibility-audit-cli.git"
+  },
+  "homepage": "https://github.com/gieglas/accessibility-audit-cli",
   "author": "Constantinos Evangelou",
   "engines": {
     "node": ">=18"
