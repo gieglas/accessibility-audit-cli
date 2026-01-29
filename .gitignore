@@ -1,5 +1,7 @@
 node_modules
 audits/
+!test/fixtures/audits/
+!test/fixtures/audits/**
 reports/
 coverage/
 log/

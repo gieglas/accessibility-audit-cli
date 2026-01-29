@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "auditRun": { "auditRunId": "run-2" },
+  "results": {
+    "normalisedFindings": {
+      "compliance": [],
+      "other": []
+    }
+  }
+}
+ 
