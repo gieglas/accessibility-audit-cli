@@ -1,5 +1,7 @@
 node_modules
 audits/
+reports/
+coverage/
 log/
 debug/
 .ssh/

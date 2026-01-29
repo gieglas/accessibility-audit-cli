@@ -1,0 +1,15 @@
+{
+  "auditsPath": "../ce-accessibility-audit-cli/audits",
+  "standard": "EN301549-v3.2.1",
+  "mode": "latest",
+  "output": {
+    "directory": "./reports/aggregated_analysis",
+    "filenamePrefix": "cyprus-accessibility-analysis",
+    "formats": ["json","csv"]
+  },
+  "copyLatestCsv": {
+    "sourceDir": "./reports/aggregated_analysis",
+    "destDir": "./excel_analysis/aggregated_analysis",
+    "destName": "aggregated-analysis.csv"
+  }
+}
