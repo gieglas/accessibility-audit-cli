@@ -111,9 +111,17 @@ jobs:
       - name: Publish package on NPM 📦
         run: npm publish --provenance --access=public
         # With the change to use Trusted Publisher the NPM TOKEN is no longer needed
-      - name: Zip /cli folder
+      - name: Zip npm package contents
         if: steps.version-check.outputs.changed == 'true'
-        run: zip -r cli.zip cli
+        run: |
+          zip -r accessibility-audit-cli.zip \
+            cli \
+            analysis \
+            excel_analysis \
+            package.json \
+            README.md \
+            LICENSE \
+            CHANGELOG.md
       - name: Create Release
         if: steps.version-check.outputs.changed == 'true'
         id: create_release
@@ -132,6 +140,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./cli.zip
-          asset_name: cli.zip
+          asset_path: ./accessibility-audit-cli.zip
+          asset_name: accessibility-audit-cli.zip
           asset_content_type: application/zip

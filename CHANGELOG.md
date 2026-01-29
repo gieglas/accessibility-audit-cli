@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v2.0.0] - 2026-01-29
+### Added
+- `Aggregated analysis` workflows
+    - Export to JSON
+    - Export to CSV
+    - Excel template
+    - Helper commands initialise Excel and copy latest CSV
+    - Tests for Analysis
+- New cli router command `accessibility-audit`
+- Coverage report
+
+### Changed
+- Updated `README.md`
+- Updated `tag-and-publish-on-version-change.yml` to include new code in releases
+
 ## [v1.0.6] - 2026-01-27
 ### Changed
 - Fixes on `tag-and-publish-on-version-change.yml`
