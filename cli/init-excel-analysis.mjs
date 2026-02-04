@@ -34,35 +34,6 @@ const packageRoot = path.resolve(__dirname, "..");
 const cwd = process.cwd();
 
 /**
- * Source directory containing Excel templates inside the package.
- * This directory is treated as read-only.
- */
-const sourceDir = path.join(
-  packageRoot,
-  "excel_analysis",
-  "aggregated_analysis"
-);
-
-/**
- * Destination directory inside the user's workspace.
- * This directory is writable and owned by the user.
- */
-const destinationDir = path.join(
-  cwd,
-  "excel_analysis",
-  "aggregated_analysis"
-);
-
-/**
- * List of template files to copy.
- * These are considered reference assets and should never be modified in-place.
- */
-const filesToCopy = [
-  "aggregated-analysis-template.xlsm",
-  "aggregated-analysis.csv"
-];
-
-/**
  * Determine whether the script is being executed from within
  * the CLI package repository itself.
  *
@@ -82,9 +53,11 @@ function isRunningInsidePackageRepo() {
  * - incomplete installations
  * - accidental file moves during development
  *
+ * @param {string[]} filesToCopy List of files to verify
+ * @param {string} sourceDir Directory where source files are located
  * @throws {Error} if any source file is missing
  */
-async function ensureSourceFilesExist() {
+async function ensureSourceFilesExist(filesToCopy, sourceDir) {
   for (const file of filesToCopy) {
     const sourcePath = path.join(sourceDir, file);
     try {
@@ -101,10 +74,11 @@ async function ensureSourceFilesExist() {
  * If any destination file already exists, the operation is aborted.
  * Excel templates are assumed to be manually edited by users and
  * must never be overwritten implicitly.
- *
+ * @param {string[]} filesToCopy List of files to verify
+ * @param {string} destinationDir Directory where files will be copied
  * @throws {Error} if any destination file already exists
  */
-async function ensureDestinationIsEmpty() {
+async function ensureDestinationIsEmpty(filesToCopy, destinationDir) {
   for (const file of filesToCopy) {
     const destinationPath = path.join(destinationDir, file);
     try {
@@ -125,9 +99,12 @@ async function ensureDestinationIsEmpty() {
  *
  * The destination directory is created if it does not exist.
  *
+ * @param {string[]} filesToCopy List of files to copy
+ * @param {string} sourceDir Directory where source files are located
+ * @param {string} destinationDir Directory where files will be copied
  * @returns {Promise<void>}
  */
-async function copyTemplateFiles() {
+async function copyTemplateFiles(filesToCopy, sourceDir, destinationDir) {
   await fs.mkdir(destinationDir, { recursive: true });
 
   for (const file of filesToCopy) {
@@ -158,11 +135,77 @@ async function main() {
   }
 
   try {
-    await ensureSourceFilesExist();
-    await ensureDestinationIsEmpty();
-    await copyTemplateFiles();
+    /**
+     * Source directory containing Excel templates inside the package.
+     * This directory is treated as read-only.
+     */
+    const sourceDir = path.join(
+      packageRoot,
+      "excel_analysis",
+      "aggregated_analysis"
+    );
 
-    console.log("\n✔ Excel analysis workspace initialised successfully.");
+    /**
+     * Destination directory inside the user's workspace.
+     * This directory is writable and owned by the user.
+     */
+    const destinationDir = path.join(
+      cwd,
+      "excel_analysis",
+      "aggregated_analysis"
+    );
+
+    /**
+     * List of template files to copy.
+     * These are considered reference assets and should never be modified in-place.
+     */
+    const filesToCopy = [
+      "aggregated-analysis-template.xlsm",
+      "aggregated-analysis.csv"
+    ];
+    await ensureSourceFilesExist(filesToCopy, sourceDir);
+    await ensureDestinationIsEmpty(filesToCopy, destinationDir);
+    await copyTemplateFiles(filesToCopy, sourceDir, destinationDir);
+
+    console.log("\n✔ Excel aggregated analysis workspace initialised successfully.");
+  } catch (err) {
+    console.error(`\n✖ Error: ${err.message}`);
+    // process.exit(1);
+  }
+  try {
+    /**
+     * Source directory containing Excel templates inside the package.
+     * This directory is treated as read-only.
+     */
+    const sourceDir = path.join(
+      packageRoot,
+      "excel_analysis",
+      "audit_analysis"
+    );
+
+    /**
+     * Destination directory inside the user's workspace.
+     * This directory is writable and owned by the user.
+     */
+    const destinationDir = path.join(
+      cwd,
+      "excel_analysis",
+      "audit_analysis"
+    );
+
+    /**
+     * List of template files to copy.
+     * These are considered reference assets and should never be modified in-place.
+     */
+    const filesToCopy = [
+      "audit-analysis-template.xlsm",
+      "run-yyyymmdd.json"
+    ];
+    await ensureSourceFilesExist(filesToCopy, sourceDir);
+    await ensureDestinationIsEmpty(filesToCopy, destinationDir);
+    await copyTemplateFiles(filesToCopy, sourceDir, destinationDir);
+
+    console.log("\n✔ Excel audit analysis workspace initialised successfully.");
   } catch (err) {
     console.error(`\n✖ Error: ${err.message}`);
     process.exit(1);
