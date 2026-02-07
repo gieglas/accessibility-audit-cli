@@ -83,4 +83,27 @@ test("runAggregatedAnalysis aggregates WCAG violations across multiple audit run
       }
     }
   });
+
+  assert.deepEqual(result.sites, [
+    {
+      siteId: "site-a",
+      violations: { compliance: 2, other: 0 }
+    },
+    {
+      siteId: "site-b",
+      violations: { compliance: 3, other: 0 }
+    }
+  ]);
+
+});
+
+test("runAggregatedAnalysis returns empty sites array when no audit runs are found", async () => {
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "audit-analysis-empty-"));
+
+  const result = await runAggregatedAnalysis({
+    rootDir: tmpDir,
+    standard
+  });
+
+  assert.deepEqual(result.sites, []);
 });
