@@ -102,7 +102,8 @@ async function run() {
             auditsPath
         },
 
-        aggregations: analysisResult.aggregations
+        aggregations: analysisResult.aggregations,
+        sites: analysisResult.sites
     };
 
     if (outputConfig.formats.includes("json")) {

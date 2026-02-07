@@ -1,0 +1,126 @@
+{
+  "generatedAt": "2026-02-06T16:29:48.159Z",
+  "standard": {
+    "standardId": "EN301549_v3.2.1",
+    "wcagVersion": "2.1"
+  },
+  "mode": "latest",
+  "source": {
+    "auditsPath": "C:\\Users\\constantinos\\Documents\\code\\DSF\\ce-accessibility-audit-cli\\audits"
+  },
+  "aggregations": {
+    "violationsByWcagTree": {
+      "totalViolations": 75,
+      "tree": {
+        "Understandable": {
+          "total": 4,
+          "guidelines": {
+            "3.1": {
+              "total": 4,
+              "criteria": {
+                "3.1.1": 4
+              }
+            }
+          }
+        },
+        "Robust": {
+          "total": 11,
+          "guidelines": {
+            "4.1": {
+              "total": 11,
+              "criteria": {
+                "4.1.2": 11
+              }
+            }
+          }
+        },
+        "Perceivable": {
+          "total": 56,
+          "guidelines": {
+            "1.4": {
+              "total": 49,
+              "criteria": {
+                "1.4.3": 42,
+                "1.4.1": 7
+              }
+            },
+            "1.1": {
+              "total": 7,
+              "criteria": {
+                "1.1.1": 7
+              }
+            }
+          }
+        },
+        "Operable": {
+          "total": 4,
+          "guidelines": {
+            "2.1": {
+              "total": 3,
+              "criteria": {
+                "2.1.1": 3
+              }
+            },
+            "2.4": {
+              "total": 1,
+              "criteria": {
+                "2.4.4": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "sites": [
+    {
+      "siteId": "consevangelou",
+      "violations": {
+        "compliance": 0,
+        "other": 0
+      }
+    },
+    {
+      "siteId": "cypruspost",
+      "violations": {
+        "compliance": 46,
+        "other": 7
+      }
+    },
+    {
+      "siteId": "dsf",
+      "violations": {
+        "compliance": 0,
+        "other": 4
+      }
+    },
+    {
+      "siteId": "govcy",
+      "violations": {
+        "compliance": 2,
+        "other": 11
+      }
+    },
+    {
+      "siteId": "idme",
+      "violations": {
+        "compliance": 8,
+        "other": 3
+      }
+    },
+    {
+      "siteId": "kep-kepo",
+      "violations": {
+        "compliance": 16,
+        "other": 63
+      }
+    },
+    {
+      "siteId": "presidency",
+      "violations": {
+        "compliance": 3,
+        "other": 7
+      }
+    }
+  ]
+} 
