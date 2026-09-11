@@ -105,7 +105,7 @@ jobs:
         run: npm publish --provenance --access public --dry-run
       # Ensure npm 11.5.1 or later is installed
       - name: Update npm
-        run: npm install -g npm@@11.5.1
+        run: npm install -g npm@11.5.1
       - name: Install dependencies 
         run: npm ci
       - name: Publish package on NPM 📦
